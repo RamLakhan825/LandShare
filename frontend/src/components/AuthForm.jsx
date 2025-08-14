@@ -9,6 +9,7 @@ import registerImg from "../assets/register.jpg";
 const AuthForm = () => {
   const { setUser } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
+  const BACKEND_URL = import.meta.env.VITE_BACKEND_URL; 
   const [form, setForm] = useState({ name: "", email: "", password: "" });
 
   const handleChange = (e) =>
@@ -17,8 +18,9 @@ const AuthForm = () => {
   const toggleMode = () => setIsLogin((prev) => !prev);
 
   const handleSubmit = async (e) => {
+    
     e.preventDefault();
-    const url = isLogin ? "/api/auth/login" : "/api/auth/register";
+    const url = isLogin ? `${BACKEND_URL}/api/auth/login` :  `${BACKEND_URL}/api/auth/register`;
 
     try {
       const res = await axios.post(url, form);
@@ -42,7 +44,7 @@ const AuthForm = () => {
       const result = await signInWithPopup(auth, provider);
       const token = await result.user.getIdToken();
 
-      const res = await axios.post("/api/auth/google-login", { token });
+      const res = await axios.post(`${BACKEND_URL}/api/auth/google-login`, { token });
 
       // Save token, email, and userId in localStorage
       // localStorage.setItem("token", res.data.token);
