@@ -13,7 +13,7 @@ frontend/dist/
 backend/dist/
 
 # Firebase service account
-# backend/firebase/serviceAccountKey.json
+ backend/firebase/serviceAccountKey.json
 
 # Logs
 *.log
