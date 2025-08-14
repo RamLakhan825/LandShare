@@ -109,7 +109,7 @@ const AuthForm = () => {
                   onClick={googleLogin}
                   className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition flex items-center gap-2 mx-auto"
                 >
-                  <img src="/src/assets/google.png" alt="Google" className="w-5 h-5" />
+                  <img src="../assets/google.png" alt="Google" className="w-5 h-5" />
                   Login with Google
                 </button>
               </div>
