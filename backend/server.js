@@ -18,7 +18,7 @@ const server = http.createServer(app); // wrap app with HTTP server
 // Initialize Socket.IO
 const io = new Server(server, {
   cors: {
-    origin: "http://localhost:5173",
+    origin: "https://land-share-825.vercel.app",
     methods: ["GET", "POST"],
     credentials: true
   }
@@ -30,7 +30,7 @@ startFluctuationLoop(io);
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: 'https://land-share-825.vercel.app',
   credentials: true
 }));
 app.use(express.json());

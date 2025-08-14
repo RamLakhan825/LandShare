@@ -82,7 +82,7 @@ export default function IpoCard({ ipo, isAdmin, refresh, holdings, user }) {
     async function fetchPriceHistory() {
       try {
         const res = await fetch(
-          `http://localhost:5000/ipo/${ipo.id}/price-history`
+          `https://landshare-2.onrender.com/ipo/${ipo.id}/price-history`
         );
         const data = await res.json();
 

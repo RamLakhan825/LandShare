@@ -13,7 +13,7 @@ export default defineConfig({
   server: {
     proxy: {
       '/api': {
-        target: 'http://localhost:5000', // Your backend port
+        target: 'https://landshare-2.onrender.com', // Your backend port
         changeOrigin: true,
         secure: false,
       },

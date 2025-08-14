@@ -1,6 +1,6 @@
 // src/api/transactions.js
 import axios from "axios";
-const API = axios.create({ baseURL: import.meta.env.VITE_API_URL || "http://localhost:5000" });
+const API = axios.create({ baseURL: import.meta.env.VITE_API_URL || "https://landshare-2.onrender.com" });
 
 export const createOrder = (payload) => API.post("/transaction/create-order", payload);
 export const verifyPayment = (payload) => API.post("/transaction/verify", payload);
