@@ -5,7 +5,7 @@ import { io } from "socket.io-client";
 export default function BuyButton({ ipo, onIpoUpdate }) {
   const [open, setOpen] = useState(false);
   useEffect(() => {
-    const socket = io(import.meta.env.VITE_API_URL?.replace("/api","") || "https://landshare-2.onrender.com");
+    const socket = io(import.meta.env.VITE_API_URL?.replace("/api","") || "https://landshare-2.onrender.com/");
     socket.on("ipo:update", (data) => {
       if (data.ipoId === ipo.id && onIpoUpdate) onIpoUpdate(data);
     });

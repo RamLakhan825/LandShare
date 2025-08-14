@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 export const getPendingIPOs = async (token) => {
-  const res = await axios.get("https://landshare-2.onrender.com/ipo/pending", {
+  const res = await axios.get("https://landshare-2.onrender.com//ipo/pending", {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -10,7 +10,7 @@ export const getPendingIPOs = async (token) => {
 };
 
 export const approveIPO = async (id, token) => {
-  const res = await axios.put(`https://landshare-2.onrender.com/ipo/approve/${id}`, null, {
+  const res = await axios.put(`https://landshare-2.onrender.com//ipo/approve/${id}`, null, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -21,7 +21,7 @@ export const approveIPO = async (id, token) => {
 
 // src/utils/ipo.js
 export const deleteIPO = async (id, token) => {
-  const res = await fetch(`https://landshare-2.onrender.com/ipo/delete/${id}`, {
+  const res = await fetch(`https://landshare-2.onrender.com//ipo/delete/${id}`, {
     method: 'DELETE',
     headers: {
       Authorization: `Bearer ${token}`

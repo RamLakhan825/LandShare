@@ -45,7 +45,7 @@ const IpoForm = () => {
 
     try {
       const token = localStorage.getItem("token");
-      const res = await axios.post("https://landshare-2.onrender.com/ipo/create", data, {
+      const res = await axios.post("https://landshare-2.onrender.com//ipo/create", data, {
   headers: {
     "Content-Type": "multipart/form-data",
     Authorization: `Bearer ${token}`,

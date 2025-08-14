@@ -22,15 +22,17 @@ const AuthForm = () => {
 
     try {
       const res = await axios.post(url, form);
+      console.log(res);
 
       // Save token, email, and userId in localStorage
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("email", res.data.user.email);
-      localStorage.setItem("userId", res.data.user.id);
+      // localStorage.setItem("token", res.data.token);
+      // localStorage.setItem("email", res.data.user.email);
+      // localStorage.setItem("userId", res.data.user.id);
 
       // Update context
       setUser(res.data.user);
     } catch (err) {
+      console.log(err);
       alert(err.response?.data?.msg || "Error");
     }
   };
@@ -43,9 +45,9 @@ const AuthForm = () => {
       const res = await axios.post("/api/auth/google-login", { token });
 
       // Save token, email, and userId in localStorage
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("email", res.data.user.email);
-      localStorage.setItem("userId", res.data.user.id);
+      // localStorage.setItem("token", res.data.token);
+      // localStorage.setItem("email", res.data.user.email);
+      // localStorage.setItem("userId", res.data.user.id);
 
       // Update context
       setUser(res.data.user);
