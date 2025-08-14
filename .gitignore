@@ -14,7 +14,7 @@ backend/dist/
 
 # Firebase service account
 backend/firebase/serviceAccountKey.json
-
+frontend/firebase
 # Logs
 *.log
 
