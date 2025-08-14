@@ -1,0 +1,24 @@
+# Node modules
+frontend/node_modules/
+backend/node_modules/
+
+# Environment files
+frontend/.env
+frontend/.env.local
+backend/.env
+backend/.env.local
+
+# Build / dist folders
+frontend/dist/
+backend/dist/
+
+# Firebase service account
+backend/firebase/serviceAccountKey.json
+
+# Logs
+*.log
+
+# OS / Editor files
+.DS_Store
+.vscode/
+.idea/
