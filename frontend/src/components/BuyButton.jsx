@@ -15,7 +15,7 @@ export default function BuyButton({ ipo, onIpoUpdate }) {
   return (
     <>
       <button onClick={() => setOpen(true)} className="bg-green-600 px-3 py-1 rounded text-white">Buy</button>
-      {open && <BuyModal ipo={ipo} onClose={() => setOpen(false)} onSuccess={() => { if(onIpoUpdate) onIpoUpdate({ ipoId: ipo.id }); }} />}
+      {open && <BuyModal ipo={ipo}userEmail={user.email} onClose={() => setOpen(false)} onSuccess={() => { if(onIpoUpdate) onIpoUpdate({ ipoId: ipo.id }); }} />}
     </>
   );
 }

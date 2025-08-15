@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { createOrder, verifyPayment } from "../utils/transaction";
 
-export default function BuyModal({ ipo, onClose, onSuccess }) {
+export default function BuyModal({ ipo,, userEmail, onClose, onSuccess }) {
   const [shares, setShares] = useState(1);
-  const email = localStorage.getItem("email"); // or get from your auth context
+  const email = userEmail; // or get from your auth context
   const pricePerShare = Number(
     ipo.shareCost ?? ipo.share_cost ?? ipo.sharePrice ?? ipo.share_price ?? 0
   );
@@ -26,7 +26,7 @@ export default function BuyModal({ ipo, onClose, onSuccess }) {
   const handleBuy = async (e) => {
     e.preventDefault();
     if (!shares || shares <= 0) return alert("Enter a valid number of shares");
-
+    
     try {
       // Create order on backend
       const res = await createOrder({ ipoId: ipo.id, shares, buyerEmail: email });
