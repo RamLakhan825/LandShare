@@ -209,7 +209,7 @@ export default function IpoCard({ ipo, isAdmin, refresh, holdings, user }) {
         )}
         <div className="ml-auto flex space-x-3">
           {ipo.approved && ipo.availableShares > 0 && (
-            <BuyButton ipo={ipo} onIpoUpdate={handleIpoUpdate} />
+            <BuyButton ipo={ipo} user={user}onIpoUpdate={handleIpoUpdate} />
           )}
           {holdings.some(
             (h) =>
