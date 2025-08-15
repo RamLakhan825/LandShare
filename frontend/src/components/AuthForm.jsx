@@ -21,7 +21,7 @@ const AuthForm = () => {
   const handleSubmit = async (e) => {
     
     e.preventDefault();
-    const url = isLogin ? `${BACKEND_URL}/api/auth/login` :  `${BACKEND_URL}/api/auth/register`;
+    const url = isLogin ? `/api/auth/login` :  `/api/auth/register`;
 
     try {
       const res = await axios.post(url, form);
@@ -45,7 +45,7 @@ const AuthForm = () => {
       const result = await signInWithPopup(auth, provider);
       const token = await result.user.getIdToken();
 
-      const res = await axios.post(`${BACKEND_URL}/api/auth/google-login`, { token });
+      const res = await axios.post(`/api/auth/google-login`, { token });
 
       // Save token, email, and userId in localStorage
       // localStorage.setItem("token", res.data.token);
