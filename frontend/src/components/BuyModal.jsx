@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { createOrder, verifyPayment } from "../utils/transaction";
 
-export default function BuyModal({ ipo,, userEmail, onClose, onSuccess }) {
+export default function BuyModal({ ipo, userEmail, onClose, onSuccess }) {
   const [shares, setShares] = useState(1);
   const email = userEmail; // or get from your auth context
   const pricePerShare = Number(
