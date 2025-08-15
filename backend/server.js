@@ -29,10 +29,30 @@ startFluctuationLoop(io);
 
 
 // Middleware
+// app.use(cors({
+//   origin: 'https://land-share-825.vercel.app',
+//   credentials: true
+// }));
+
+const allowedOrigins = [
+  "http://localhost:5173",
+  "https://land-share-825.vercel.app"
+];
+
 app.use(cors({
-  origin: 'https://land-share-825.vercel.app',
+  origin: function (origin, callback) {
+    // allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    } else {
+      return callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true
 }));
+
+
 app.use(express.json());
 
 app.use(session({
