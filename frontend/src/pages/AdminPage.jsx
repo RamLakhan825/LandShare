@@ -23,7 +23,7 @@ export default function AdminPage() {
   const handleDecline = async (id) => {
     const confirmDelete = window.confirm('Are you sure you want to decline and delete this IPO?');
     if (confirmDelete) {
-      await axios.delete(`${import.meta.env.VITE_API_URL}/ipo/decline/${id}`, {
+      await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/ipo/decline/${id}`, {
       headers: { Authorization: `Bearer ${token}` }
     });
     alert('IPO Declined & Email Sent');
