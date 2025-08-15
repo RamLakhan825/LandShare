@@ -1,17 +1,15 @@
 // import { useState } from "react";
-// import axios from "axios";
 // import { auth, provider } from "../firebase";
 // import { signInWithPopup } from "firebase/auth";
 // import { useAuth } from "../context/AuthContext";
 // import loginImg from "../assets/login.jpg";
-// import googleImg from "../assets/google.png"
+// import googleImg from "../assets/google.png";
 // import registerImg from "../assets/register.jpg";
 // import api from "../utils/api";
 
 // const AuthForm = () => {
 //   const { setUser } = useAuth();
 //   const [isLogin, setIsLogin] = useState(true);
-//   const BACKEND_URL = import.meta.env.VITE_BACKEND_URL; 
 //   const [form, setForm] = useState({ name: "", email: "", password: "" });
 
 //   const handleChange = (e) =>
@@ -20,21 +18,20 @@
 //   const toggleMode = () => setIsLogin((prev) => !prev);
 
 //   const handleSubmit = async (e) => {
-    
 //     e.preventDefault();
-//     const url = isLogin ? `${BACKEND_URL}/api/auth/login` :  `${BACKEND_URL}/api/auth/register`;
+//     const endpoint = isLogin ? "/api/auth/login" : "/api/auth/register";
 
 //     try {
-//       const res = await axios.post(url, form);
+//       const res = await api.post(endpoint, form);
 //       console.log(res);
 
-//       // Save token, email, and userId in localStorage
-//       // localStorage.setItem("token", res.data.token);
-//       // localStorage.setItem("email", res.data.user.email);
-//       // localStorage.setItem("userId", res.data.user.id);
-
-//       // Update context
+//       // Update context with user data
 //       setUser(res.data.user);
+
+//       // Optionally save to localStorage
+//       localStorage.setItem("token", res.data.token);
+//       localStorage.setItem("email", res.data.user.email);
+//       localStorage.setItem("userId", res.data.user.id);
 //     } catch (err) {
 //       console.log(err);
 //       alert(err.response?.data?.msg || "Error");
@@ -46,17 +43,20 @@
 //       const result = await signInWithPopup(auth, provider);
 //       const token = await result.user.getIdToken();
 
-//       const res = await axios.post(`${BACKEND_URL}/api/auth/google-login`, { token });
+//       const res = await api.post("/api/auth/google-login", { token });
 
-//       // Save token, email, and userId in localStorage
-//       // localStorage.setItem("token", res.data.token);
-//       // localStorage.setItem("email", res.data.user.email);
-//       // localStorage.setItem("userId", res.data.user.id);
-
-//       // Update context
+//       // Update context with user data
 //       setUser(res.data.user);
+
+//       // Optionally save to localStorage
+//       localStorage.setItem("token", res.data.token);
+//       localStorage.setItem("email", res.data.user.email);
+//       localStorage.setItem("userId", res.data.user.id);
 //     } catch (err) {
-//       console.error("Google login error:", err.response?.data?.message || err.message);
+//       console.error(
+//         "Google login error:",
+//         err.response?.data?.message || err.message
+//       );
 //       alert("Google login failed");
 //     }
 //   };
@@ -178,6 +178,7 @@
 // export default AuthForm;
 
 
+
 import { useState } from "react";
 import { auth, provider } from "../firebase";
 import { signInWithPopup } from "firebase/auth";
@@ -191,30 +192,60 @@ const AuthForm = () => {
   const { setUser } = useAuth();
   const [isLogin, setIsLogin] = useState(true);
   const [form, setForm] = useState({ name: "", email: "", password: "" });
+  const [otpSent, setOtpSent] = useState(false);
+  const [otp, setOtp] = useState("");
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
 
-  const toggleMode = () => setIsLogin((prev) => !prev);
+  const toggleMode = () => {
+    setIsLogin((prev) => !prev);
+    setOtpSent(false);
+    setOtp("");
+  };
 
+  // Login handler
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const endpoint = isLogin ? "/api/auth/login" : "/api/auth/register";
-
-    try {
-      const res = await api.post(endpoint, form);
-      console.log(res);
-
-      // Update context with user data
-      setUser(res.data.user);
-
-      // Optionally save to localStorage
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("email", res.data.user.email);
-      localStorage.setItem("userId", res.data.user.id);
-    } catch (err) {
-      console.log(err);
-      alert(err.response?.data?.msg || "Error");
+    if (isLogin) {
+      try {
+        const res = await api.post("/api/auth/login", form);
+        setUser(res.data.user);
+        localStorage.setItem("token", res.data.token);
+        localStorage.setItem("email", res.data.user.email);
+        localStorage.setItem("userId", res.data.user.id);
+      } catch (err) {
+        console.log(err);
+        alert(err.response?.data?.msg || "Login error");
+      }
+    } else {
+      // Register flow: send OTP first
+      if (!otpSent) {
+        try {
+          await api.post("/api/auth/send-otp", { email: form.email });
+          setOtpSent(true);
+          alert("OTP sent to your email! Please check and enter below.");
+        } catch (err) {
+          console.log(err);
+          alert(err.response?.data?.msg || "Failed to send OTP");
+        }
+      } else {
+        // Verify OTP
+        try {
+          await api.post("/api/auth/verify-otp", { email: form.email, otp });
+          // OTP verified, now register user
+          const res = await api.post("/api/auth/register", form);
+          setUser(res.data.user);
+          localStorage.setItem("token", res.data.token);
+          localStorage.setItem("email", res.data.user.email);
+          localStorage.setItem("userId", res.data.user.id);
+          setOtpSent(false);
+          setOtp("");
+        } catch (err) {
+          console.log(err);
+          alert(err.response?.data?.msg || "OTP verification failed");
+        }
+      }
     }
   };
 
@@ -222,13 +253,8 @@ const AuthForm = () => {
     try {
       const result = await signInWithPopup(auth, provider);
       const token = await result.user.getIdToken();
-
       const res = await api.post("/api/auth/google-login", { token });
-
-      // Update context with user data
       setUser(res.data.user);
-
-      // Optionally save to localStorage
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("email", res.data.user.email);
       localStorage.setItem("userId", res.data.user.id);
@@ -318,6 +344,7 @@ const AuthForm = () => {
                   onChange={handleChange}
                   required
                   className="p-2 border border-gray-300 rounded"
+                  disabled={otpSent} // disable if OTP sent
                 />
                 <input
                   type="password"
@@ -327,8 +354,23 @@ const AuthForm = () => {
                   required
                   className="p-2 border border-gray-300 rounded"
                 />
-                <button className="bg-green-600 text-white py-2 rounded hover:bg-green-700 transition">
-                  Register
+                {otpSent && (
+                  <input
+                    type="text"
+                    name="otp"
+                    placeholder="Enter OTP"
+                    value={otp}
+                    onChange={(e) => setOtp(e.target.value)}
+                    required
+                    className="p-2 border border-gray-300 rounded"
+                  />
+                )}
+                <button
+                  className={`${
+                    otpSent ? "bg-green-600 hover:bg-green-700" : "bg-purple-600 hover:bg-purple-700"
+                  } text-white py-2 rounded transition`}
+                >
+                  {otpSent ? "Verify OTP & Register" : "Register"}
                 </button>
               </form>
               <p className="mt-4 text-center text-sm text-gray-600">
