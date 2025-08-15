@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getPendingIPOs, approveIPO, deleteIPO } from '../utils/ipo';
+import { getPendingIPOs, approveIPO, declineIPO } from '../utils/ipo';
 import axios from 'axios'; 
 
 export default function AdminPage() {
@@ -23,9 +23,7 @@ export default function AdminPage() {
   const handleDecline = async (id) => {
     const confirmDelete = window.confirm('Are you sure you want to decline and delete this IPO?');
     if (confirmDelete) {
-      await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/ipo/decline/${id}`, {
-      headers: { Authorization: `Bearer ${token}` }
-    });
+      await declineIPO(id,token);
     alert('IPO Declined & Email Sent');
     setPending(pending.filter((ipo) => ipo.id !== id));
   }

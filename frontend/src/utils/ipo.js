@@ -20,7 +20,7 @@ export const approveIPO = async (id, token) => {
 
 
 // src/utils/ipo.js
-export const deleteIPO = async (id, token) => {
+export const declineIPO = async (id, token) => {
   const res = await fetch(`https://landshare-2.onrender.com/ipo/delete/${id}`, {
     method: 'DELETE',
     headers: {
