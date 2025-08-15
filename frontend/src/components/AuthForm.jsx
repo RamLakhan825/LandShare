@@ -209,9 +209,9 @@ const AuthForm = () => {
       setUser(res.data.user);
 
       // Optionally save to localStorage
-      // localStorage.setItem("token", res.data.token);
-      // localStorage.setItem("email", res.data.user.email);
-      // localStorage.setItem("userId", res.data.user.id);
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("email", res.data.user.email);
+      localStorage.setItem("userId", res.data.user.id);
     } catch (err) {
       console.log(err);
       alert(err.response?.data?.msg || "Error");
@@ -229,9 +229,9 @@ const AuthForm = () => {
       setUser(res.data.user);
 
       // Optionally save to localStorage
-      // localStorage.setItem("token", res.data.token);
-      // localStorage.setItem("email", res.data.user.email);
-      // localStorage.setItem("userId", res.data.user.id);
+      localStorage.setItem("token", res.data.token);
+      localStorage.setItem("email", res.data.user.email);
+      localStorage.setItem("userId", res.data.user.id);
     } catch (err) {
       console.error(
         "Google login error:",
