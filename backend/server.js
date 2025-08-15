@@ -77,7 +77,6 @@ app.use("/ipo", ipoRoutes);
 app.use("/transaction", transactionRoutes);
 app.use("/api/holdings", holdingsRoutes);
 const contactRoutes = require("./routes/contact");
-app.use('/api/auth', require('./routes/auth'));
 app.use("/contact", contactRoutes);
 
 
