@@ -1,20 +1,3 @@
-// const sequelize = require("../config/db");
-// const User = require("./User");
-// const Ipo = require("./Ipo");
-// const Transaction=require("./Transaction");
-// const Holding=require("./Holding");
-
-// const db = {
-//   sequelize,
-//   Sequelize: require("sequelize"),
-//   User,
-//   Ipo,
-//   Transaction,
-//   Holding,
-// };
-
-// module.exports = db;
-
 
 const sequelize = require("../config/db");
 const { Sequelize } = require("sequelize");
@@ -34,6 +17,14 @@ const db = {
   Holding,
   PriceHistory
 };
+
+const PredictedPrice = require("./PredictedPrice");
+
+PredictedPrice.belongsTo(Ipo, { foreignKey: "ipoId" });
+Ipo.hasMany(PredictedPrice, { foreignKey: "ipoId" });
+
+db.PredictedPrice = PredictedPrice;
+
 
 // Associations
 Ipo.belongsTo(User, { foreignKey: "userId" });
