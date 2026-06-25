@@ -23,6 +23,7 @@
     "express-session": "^1.18.2",
     "firebase-admin": "^13.4.0",
     "jsonwebtoken": "^9.0.2",
+    "ml-random-forest": "^2.1.0",
     "multer": "^2.0.2",
     "multer-storage-cloudinary": "^4.0.0",
     "mysql2": "^3.14.3",

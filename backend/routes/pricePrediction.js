@@ -4,6 +4,7 @@ const router = express.Router();
 const { PredictedPrice } = require("../models");
 const { Ipo } = require("../models");
 
+
 router.get("/:ipoId/latest", async (req, res) => {
   try {
     const ipoId = req.params.ipoId;
@@ -21,5 +22,6 @@ router.get("/:ipoId/latest", async (req, res) => {
     res.status(500).json({ message: "Failed to fetch latest prediction" });
   }
 });
+
 
 module.exports = router;

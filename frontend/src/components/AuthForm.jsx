@@ -263,9 +263,31 @@ const AuthForm = () => {
         "Google login error:",
         err.response?.data?.message || err.message
       );
+      console.log("Google login error:", err);
       alert("Google login failed");
     }
   };
+
+// const googleLogin = async () => {
+//   try {
+//     await signInWithPopup(auth, provider);
+//     const token = await result.user.getIdToken();
+//       const res = await api.post("/api/auth/google-login", { token });
+//       setUser(res.data.user);
+//       localStorage.setItem("token", res.data.token);
+//       localStorage.setItem("email", res.data.user.email);
+//       localStorage.setItem("userId", res.data.user.id);
+//   } catch (error) {
+//     if (error.code === "auth/popup-closed-by-user") {
+//       console.warn("Popup closed, retrying...");
+//       // Retry after short delay
+//       setTimeout(() => googleLogin(), 1000);
+//     } else {
+//       console.error("Login failed:", error);
+//     }
+//   }
+// };
+
 
   return (
     <div className="h-screen w-screen bg-gradient-to-br from-purple-600 to-pink-500 flex justify-center items-center">

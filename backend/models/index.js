@@ -19,11 +19,21 @@ const db = {
 };
 
 const PredictedPrice = require("./PredictedPrice");
+const PredictedPriceV2 = require("./PredictedPriceV2");
+
+
 
 PredictedPrice.belongsTo(Ipo, { foreignKey: "ipoId" });
 Ipo.hasMany(PredictedPrice, { foreignKey: "ipoId" });
 
 db.PredictedPrice = PredictedPrice;
+
+PredictedPriceV2.belongsTo(Ipo, { foreignKey: "ipoId" });
+Ipo.hasMany(PredictedPriceV2, { foreignKey: "ipoId" });
+
+
+
+db.PredictedPriceV2 = PredictedPriceV2;
 
 
 // Associations
