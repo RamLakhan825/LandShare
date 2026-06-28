@@ -2,7 +2,7 @@ import axios from 'axios';
 const BASE_URL = import.meta.env.VITE_API_URL;
 
 export const getPendingIPOs = async (token) => {
-  const res = await axios.get(`${BASE_URL}/ipo/pending`, {
+  const res = await axios.get("http://localhost:5000/ipo/pending", {
     headers: {
       Authorization: `Bearer ${token}`,
     },
@@ -11,7 +11,7 @@ export const getPendingIPOs = async (token) => {
 };
 
 export const approveIPO = async (id, token) => {
-  const res = await axios.put( `${BASE_URL}/ipo/approve/${id}`, null, {
+  const res = await axios.put(`http://localhost:5000/ipo/approve/${id}`, null, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
