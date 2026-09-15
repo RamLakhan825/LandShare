@@ -128,58 +128,78 @@ exports.login = async (req, res) => {
 // };
 
 exports.googleLogin = async (req, res) => {
-  const start = Date.now();
-
-  console.log("🚀 Google login request received");
-
   const { token: idToken } = req.body;
 
+  if (!idToken) {
+    return res.status(400).json({
+      msg: "Google token is required"
+    });
+  }
+
   try {
-    console.log("🔥 Starting Firebase verification");
+    console.log("🚀 Google login request received");
 
-    const firebaseStart = Date.now();
-
+    console.time("🔥 Firebase verification");
     const decoded = await admin.auth().verifyIdToken(idToken);
-
-    console.log(
-      `🔥 Firebase verification: ${Date.now() - firebaseStart}ms`
-    );
+    console.timeEnd("🔥 Firebase verification");
 
     const { uid, email, name } = decoded;
 
-    console.log("🗄️ Starting database lookup");
+    if (!email) {
+      return res.status(400).json({
+        msg: "Google account has no email"
+      });
+    }
 
-    const dbStart = Date.now();
+    // IMPORTANT: define it here
+    const normalizedEmail = email.toLowerCase().trim();
+
+    console.time("🗄️ Database lookup");
 
     let user = await User.findOne({
       where: { firebaseUid: uid }
     });
 
     if (!user) {
-  user = await User.create({
-    firebaseUid: uid,
-    email: normalizedEmail,
-    name: name || "User",
-    isGoogleUser: true
-  });
-} else if (!user.firebaseUid) {
-  user.firebaseUid = uid;
-  user.isGoogleUser = true;
+      user = await User.findOne({
+        where: { email: normalizedEmail }
+      });
+    }
 
-  await user.save();
-}
+    console.timeEnd("🗄️ Database lookup");
 
-    console.log(
-      `🗄️ Database lookup: ${Date.now() - dbStart}ms`
-    );
+    if (!user) {
+      user = await User.create({
+        firebaseUid: uid,
+        email: normalizedEmail,
+        name: name || "User",
+        isGoogleUser: true
+      });
+    } else if (!user.firebaseUid) {
+      user.firebaseUid = uid;
+      user.isGoogleUser = true;
+      await user.save();
+    }
 
-    // rest of your login logic...
+    const jwtToken = generateToken(user.id);
 
-    console.log(
-      `✅ TOTAL GOOGLE LOGIN: ${Date.now() - start}ms`
-    );
+    const safeUser = {
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      isGoogleUser: user.isGoogleUser
+    };
+
+    return res.status(200).json({
+      token: jwtToken,
+      user: safeUser
+    });
 
   } catch (err) {
-    console.error("❌ Google login error:", err);
+    console.error("❌ Google authentication error:", err);
+
+    return res.status(401).json({
+      msg: "Invalid Google token"
+    });
   }
 };
