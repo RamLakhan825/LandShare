@@ -194,6 +194,7 @@ const AuthForm = () => {
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [otpSent, setOtpSent] = useState(false);
   const [otp, setOtp] = useState("");
+  const [googleLoading, setGoogleLoading] = useState(false);
 
   const handleChange = (e) =>
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -249,24 +250,24 @@ const AuthForm = () => {
     }
   };
 
-  const googleLogin = async () => {
-    try {
-      const result = await signInWithPopup(auth, provider);
-      const token = await result.user.getIdToken();
-      const res = await api.post("/api/auth/google-login", { token });
-      setUser(res.data.user);
-      localStorage.setItem("token", res.data.token);
-      localStorage.setItem("email", res.data.user.email);
-      localStorage.setItem("userId", res.data.user.id);
-    } catch (err) {
-      console.error(
-        "Google login error:",
-        err.response?.data?.message || err.message
-      );
-      console.log("Google login error:", err);
-      alert("Google login failed");
-    }
-  };
+  // const googleLogin = async () => {
+  //   try {
+  //     const result = await signInWithPopup(auth, provider);
+  //     const token = await result.user.getIdToken();
+  //     const res = await api.post("/api/auth/google-login", { token });
+  //     setUser(res.data.user);
+  //     localStorage.setItem("token", res.data.token);
+  //     localStorage.setItem("email", res.data.user.email);
+  //     localStorage.setItem("userId", res.data.user.id);
+  //   } catch (err) {
+  //     console.error(
+  //       "Google login error:",
+  //       err.response?.data?.message || err.message
+  //     );
+  //     console.log("Google login error:", err);
+  //     alert("Google login failed");
+  //   }
+  // };
 
 // const googleLogin = async () => {
 //   try {
@@ -288,6 +289,38 @@ const AuthForm = () => {
 //   }
 // };
 
+
+  const googleLogin = async () => {
+  try {
+    setGoogleLoading(true);
+
+    const result = await signInWithPopup(auth, provider);
+
+    const token = await result.user.getIdToken();
+
+    const res = await api.post(
+      "/api/auth/google-login",
+      { token }
+    );
+
+    setUser(res.data.user);
+
+    localStorage.setItem("token", res.data.token);
+    localStorage.setItem("email", res.data.user.email);
+    localStorage.setItem("userId", res.data.user.id);
+
+  } catch (err) {
+    console.error("Google login error:", err);
+
+    alert(
+      err.response?.data?.msg ||
+      "Google login failed"
+    );
+
+  } finally {
+    setGoogleLoading(false);
+  }
+};
 
   return (
     <div className="h-screen w-screen bg-gradient-to-br from-purple-600 to-pink-500 flex justify-center items-center">
@@ -337,10 +370,26 @@ const AuthForm = () => {
               <div className="mt-4 text-center">
                 <button
                   onClick={googleLogin}
+                   disabled={googleLoading}
                   className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition flex items-center gap-2 mx-auto"
                 >
-                  <img src={googleImg} alt="Google" className="w-5 h-5" />
-                  Login with Google
+                  {/* <img src={googleImg} alt="Google" className="w-5 h-5" />
+                  Login with Google */}
+                   {googleLoading ? (
+    <>
+      <span className="animate-spin">⟳</span>
+      Signing in...
+    </>
+  ) : (
+    <>
+      <img
+        src={googleImg}
+        alt="Google"
+        className="w-5 h-5"
+      />
+      Login with Google
+    </>
+  )}
                 </button>
               </div>
             </div>
