@@ -196,10 +196,14 @@ exports.googleLogin = async (req, res) => {
     });
 
   } catch (err) {
-    console.error("❌ Google authentication error:", err);
+    console.error("❌ Google authentication error");
+  console.error("Code:", err.code);
+  console.error("Message:", err.message);
+  console.error("Error info:", err.errorInfo);
+  console.error("Stack:", err.stack);
 
-    return res.status(401).json({
-      msg: "Invalid Google token"
-    });
+  return res.status(401).json({
+    msg: "Invalid Google token"
+  });
   }
 };
