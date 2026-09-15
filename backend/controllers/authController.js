@@ -156,10 +156,18 @@ exports.googleLogin = async (req, res) => {
     });
 
     if (!user) {
-      user = await User.findOne({
-        where: { email: email.toLowerCase() }
-      });
-    }
+  user = await User.create({
+    firebaseUid: uid,
+    email: normalizedEmail,
+    name: name || "User",
+    isGoogleUser: true
+  });
+} else if (!user.firebaseUid) {
+  user.firebaseUid = uid;
+  user.isGoogleUser = true;
+
+  await user.save();
+}
 
     console.log(
       `🗄️ Database lookup: ${Date.now() - dbStart}ms`
