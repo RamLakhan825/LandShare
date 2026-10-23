@@ -40,7 +40,7 @@ const io = new Server(server, {
 });
 
 // Start price fluctuation & prediction loop
-startFluctuationLoop(io);
+// startFluctuationLoop(io);
 
 // -----------------
 // Middleware
@@ -55,6 +55,7 @@ app.use(cors({
 }));
 
 app.use(express.json());
+app.get("/health", (req, res) => res.send("ok"));
 
 app.use(session({
   secret: process.env.SESSION_SECRET || "secret",
@@ -66,6 +67,7 @@ app.use(session({
 // -----------------
 // Routes
 // -----------------
+
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/ipo", require("./routes/ipo"));
 app.use("/transaction", require("./routes/transaction"));
@@ -105,9 +107,19 @@ io.on("connection", (socket) => {
 // -----------------
 // Start Server
 // -----------------
-db.sequelize.sync().then(() => {
-  const PORT = process.env.PORT || 5000;
-  server.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-  });
-});
+// db.sequelize.sync().then(() => {
+//   const PORT = process.env.PORT || 5000;
+//   server.listen(PORT, () => {
+//     console.log(`Server running on port ${PORT}`);
+//   });
+// });
+const PORT = process.env.PORT || 5000;
+server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+db.sequelize.authenticate()
+  .then(() => db.sequelize.sync())
+  .then(() => {
+    console.log("DB ready");
+    startFluctuationLoop(io);
+  })
+  .catch(err => console.error("DB connection failed:", err.message));

@@ -70,9 +70,20 @@ async function fluctuatePrices(io) {
  * Start loop: runs every hour, avoids overlapping runs
  */
 async function startFluctuationLoop(io) {
+  // while (true) {
+  //   await fluctuatePrices(io);
+  //   await new Promise(resolve => setTimeout(resolve, 1000 * 60 )); // wait 1 hour
+  // }
+  if (process.env.ENABLE_PRICE_LOOP === "false") return;
+
+  const intervalMs = Number(process.env.PRICE_LOOP_MINUTES || 60) * 60 * 1000;
+
+  // let the server warm up and serve logins first
+  await new Promise(r => setTimeout(r, 60 * 1000));
+
   while (true) {
     await fluctuatePrices(io);
-    await new Promise(resolve => setTimeout(resolve, 1000 * 60 )); // wait 1 hour
+    await new Promise(r => setTimeout(r, intervalMs));
   }
 }
 

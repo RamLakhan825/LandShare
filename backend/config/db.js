@@ -32,6 +32,7 @@ const sequelize = new Sequelize(
       }
     },
     logging: false,
+    pool: { max: 10, min: 2, acquire: 15000, idle: 10000 },
   }
 );
 

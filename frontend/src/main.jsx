@@ -4,6 +4,9 @@ import App from "./App";
 import "./index.css";
 import { AuthProvider } from "./context/AuthContext";
 import { BrowserRouter } from "react-router-dom";
+import { warmUpServer } from "./utils/api";
+
+warmUpServer();
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

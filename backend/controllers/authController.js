@@ -2,6 +2,7 @@ const bcrypt = require("bcrypt");
 const User = require("../models/User");
 const generateToken = require("../utils/generateToken");
 const admin = require("../firebase/firebaseConfig");
+const { Op } = require("sequelize");
 
 exports.register = async (req, res) => {
   const { name, email, password } = req.body;
@@ -37,8 +38,8 @@ exports.login = async (req, res) => {
   }
 };
 
+
 // exports.googleLogin = async (req, res) => {
-  
 //   const { token: idToken } = req.body;
 
 //   if (!idToken) {
@@ -48,11 +49,11 @@ exports.login = async (req, res) => {
 //   }
 
 //   try {
-//     console.time("Firebase verification");
+//     console.log("🚀 Google login request received");
 
+//     console.time("🔥 Firebase verification");
 //     const decoded = await admin.auth().verifyIdToken(idToken);
-
-//     console.timeEnd("Firebase verification");
+//     console.timeEnd("🔥 Firebase verification");
 
 //     const { uid, email, name } = decoded;
 
@@ -62,29 +63,23 @@ exports.login = async (req, res) => {
 //       });
 //     }
 
-//     const normalizedEmail = email.toLowerCase();
+//     // IMPORTANT: define it here
+//     const normalizedEmail = email.toLowerCase().trim();
 
-//     console.time("Database lookup");
+//     console.time("🗄️ Database lookup");
 
-//     // First search using Firebase UID
 //     let user = await User.findOne({
-//       where: {
-//         firebaseUid: uid
-//       }
+//       where: { firebaseUid: uid }
 //     });
 
-//     // Fallback for existing users
 //     if (!user) {
 //       user = await User.findOne({
-//         where: {
-//           email: normalizedEmail
-//         }
+//         where: { email: normalizedEmail }
 //       });
 //     }
 
-//     console.timeEnd("Database lookup");
+//     console.timeEnd("🗄️ Database lookup");
 
-//     // Create new user
 //     if (!user) {
 //       user = await User.create({
 //         firebaseUid: uid,
@@ -92,20 +87,14 @@ exports.login = async (req, res) => {
 //         name: name || "User",
 //         isGoogleUser: true
 //       });
-//     }
-
-//     // Link existing account with Firebase UID
-//     else if (!user.firebaseUid) {
+//     } else if (!user.firebaseUid) {
 //       user.firebaseUid = uid;
 //       user.isGoogleUser = true;
-
 //       await user.save();
 //     }
 
-//     // Generate LandShare JWT
 //     const jwtToken = generateToken(user.id);
 
-//     // Never send password/hash to frontend
 //     const safeUser = {
 //       id: user.id,
 //       name: user.name,
@@ -119,61 +108,39 @@ exports.login = async (req, res) => {
 //     });
 
 //   } catch (err) {
-//     console.error("Google authentication error:", err);
+//     console.error("❌ Google authentication error");
+//   console.error("Code:", err.code);
+//   console.error("Message:", err.message);
+//   console.error("Error info:", err.errorInfo);
+//   console.error("Stack:", err.stack);
 
-//     return res.status(401).json({
-//       msg: "Invalid Google token"
-//     });
+//   return res.status(401).json({
+//     msg: "Invalid Google token"
+//   });
 //   }
 // };
 
 exports.googleLogin = async (req, res) => {
   const { token: idToken } = req.body;
-
-  if (!idToken) {
-    return res.status(400).json({
-      msg: "Google token is required"
-    });
-  }
+  if (!idToken) return res.status(400).json({ msg: "Google token is required" });
 
   try {
-    console.log("🚀 Google login request received");
-
-    console.time("🔥 Firebase verification");
     const decoded = await admin.auth().verifyIdToken(idToken);
-    console.timeEnd("🔥 Firebase verification");
-
     const { uid, email, name } = decoded;
+    if (!email) return res.status(400).json({ msg: "Google account has no email" });
 
-    if (!email) {
-      return res.status(400).json({
-        msg: "Google account has no email"
-      });
-    }
-
-    // IMPORTANT: define it here
     const normalizedEmail = email.toLowerCase().trim();
 
-    console.time("🗄️ Database lookup");
-
     let user = await User.findOne({
-      where: { firebaseUid: uid }
+      where: { [Op.or]: [{ firebaseUid: uid }, { email: normalizedEmail }] },
     });
-
-    if (!user) {
-      user = await User.findOne({
-        where: { email: normalizedEmail }
-      });
-    }
-
-    console.timeEnd("🗄️ Database lookup");
 
     if (!user) {
       user = await User.create({
         firebaseUid: uid,
         email: normalizedEmail,
         name: name || "User",
-        isGoogleUser: true
+        isGoogleUser: true,
       });
     } else if (!user.firebaseUid) {
       user.firebaseUid = uid;
@@ -181,29 +148,12 @@ exports.googleLogin = async (req, res) => {
       await user.save();
     }
 
-    const jwtToken = generateToken(user.id);
-
-    const safeUser = {
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      isGoogleUser: user.isGoogleUser
-    };
-
     return res.status(200).json({
-      token: jwtToken,
-      user: safeUser
+      token: generateToken(user.id),
+      user: { id: user.id, name: user.name, email: user.email, isGoogleUser: user.isGoogleUser },
     });
-
   } catch (err) {
-    console.error("❌ Google authentication error");
-  console.error("Code:", err.code);
-  console.error("Message:", err.message);
-  console.error("Error info:", err.errorInfo);
-  console.error("Stack:", err.stack);
-
-  return res.status(401).json({
-    msg: "Invalid Google token"
-  });
+    console.error("Google authentication error:", err.code, err.message);
+    return res.status(401).json({ msg: "Invalid Google token" });
   }
 };
